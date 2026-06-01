@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../utils/axios';
+import api from '../lib/axios';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ posts: 0, courses: 0, messages: 0 });

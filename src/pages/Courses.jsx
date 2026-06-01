@@ -1,0 +1,168 @@
+import { useState } from 'react';
+import { Plus, Trash2, Edit } from 'lucide-react';
+import { useCourseQuery, useAddCourseMutation, useUpdateCourseMutation, useDeleteCourseMutation } from '../hooks/useCourse';
+import Modal from '../components/Modal';
+
+const Courses = () => {
+  const { data: courses = [], isLoading } = useCourseQuery();
+  const { mutateAsync: addCourse, isPending: isAdding } = useAddCourseMutation();
+  const { mutateAsync: updateCourse, isPending: isUpdating } = useUpdateCourseMutation();
+  const { mutateAsync: deleteCourse } = useDeleteCourseMutation();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [formData, setFormData] = useState({ title: '', description: '', price: '', icon: null });
+
+  const handleOpenAdd = () => {
+    setEditingCourse(null);
+    setFormData({ title: '', description: '', price: '', icon: null });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (course) => {
+    setEditingCourse(course);
+    setFormData({ title: course.title, description: course.description, price: course.price, icon: null });
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append('title', formData.title);
+    fd.append('description', formData.description);
+    fd.append('price', formData.price);
+    
+    if (formData.icon) {
+      fd.append('icon', formData.icon);
+    } else if (!editingCourse) {
+      alert('Please upload an icon');
+      return;
+    }
+
+    try {
+      if (editingCourse) {
+        await updateCourse({ id: editingCourse._id, formData: fd });
+      } else {
+        await addCourse(fd);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert('Operation failed');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this course?')) {
+      await deleteCourse(id);
+    }
+  };
+
+  if (isLoading) return <div className="text-gray-400">Loading courses...</div>;
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-red-600">Courses</h1>
+        <button 
+          onClick={handleOpenAdd}
+          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold transition"
+        >
+          <Plus size={20} />
+          <span>Add Course</span>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.map(course => (
+          <div key={course._id} className="bg-[#0a0a0a] border border-red-900/30 rounded-lg overflow-hidden p-6 flex flex-col relative group hover:border-red-600/50 transition">
+            <div className="flex items-center space-x-4 mb-4">
+              <img src={course.icon} alt={course.title} className="w-16 h-16 object-cover rounded bg-[#111]" />
+              <div>
+                <h3 className="font-bold text-xl text-gray-200">{course.title}</h3>
+                <span className="inline-block bg-red-900/30 text-red-400 px-2 py-1 rounded text-sm font-bold mt-1">
+                  ${course.price}
+                </span>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm mb-6 flex-1 line-clamp-4">{course.description}</p>
+            
+            <div className="flex justify-end space-x-2 border-t border-red-900/20 pt-4 mt-auto">
+              <button 
+                onClick={() => handleOpenEdit(course)}
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded transition"
+              >
+                <Edit size={18} />
+              </button>
+              <button 
+                onClick={() => handleDelete(course._id)}
+                className="p-2 bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white rounded transition"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
+        {courses.length === 0 && <p className="text-gray-500 col-span-full">No courses found.</p>}
+      </div>
+
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title={editingCourse ? 'Edit Course' : 'Add New Course'}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-400 mb-1">Title</label>
+            <input 
+              type="text" 
+              required
+              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200"
+              value={formData.title}
+              onChange={(e) => setFormData({...formData, title: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-gray-400 mb-1">Description</label>
+            <textarea 
+              required
+              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200 h-24"
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-gray-400 mb-1">Price</label>
+            <input 
+              type="number" 
+              step="0.01"
+              required
+              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200"
+              value={formData.price}
+              onChange={(e) => setFormData({...formData, price: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-gray-400 mb-1">Icon/Image</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-red-900/30 file:text-red-400 hover:file:bg-red-900/50 transition"
+              onChange={(e) => setFormData({...formData, icon: e.target.files[0]})}
+            />
+            {editingCourse && !formData.icon && <p className="text-sm text-gray-500 mt-1">Leave empty to keep current icon</p>}
+          </div>
+          <button 
+            type="submit" 
+            disabled={isAdding || isUpdating}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-2 rounded transition disabled:opacity-50 mt-4"
+          >
+            {isAdding || isUpdating ? 'Saving...' : 'Save Course'}
+          </button>
+        </form>
+      </Modal>
+    </div>
+  );
+};
+
+export default Courses;

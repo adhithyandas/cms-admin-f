@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/services';
+import { useLoginMutation } from '../hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { mutateAsync: login, isPending } = useLoginMutation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/admin/login', { email, password });
-      navigate('/');
+      await login({ email, password });
+      navigate('/home');
     } catch (error) {
       alert('Login failed. Check credentials.');
       console.error(error);
@@ -43,8 +44,12 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-red-600 hover:bg-red-700 p-2 rounded font-bold transition">
-            Login
+          <button 
+            type="submit" 
+            disabled={isPending}
+            className={`w-full bg-red-600 hover:bg-red-700 p-2 rounded font-bold transition ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {isPending ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>
