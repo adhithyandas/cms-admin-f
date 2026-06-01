@@ -58,15 +58,15 @@ const Courses = () => {
     }
   };
 
-  if (isLoading) return <div className="text-gray-400">Loading courses...</div>;
+  if (isLoading) return <div className="text-slate-400">Loading courses...</div>;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-red-600">Courses</h1>
+        <h1 className="text-3xl font-bold text-indigo-600">Courses</h1>
         <button 
           onClick={handleOpenAdd}
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold transition"
+          className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded font-bold transition"
         >
           <Plus size={20} />
           <span>Add Course</span>
@@ -75,35 +75,35 @@ const Courses = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map(course => (
-          <div key={course._id} className="bg-[#0a0a0a] border border-red-900/30 rounded-lg overflow-hidden p-6 flex flex-col relative group hover:border-red-600/50 transition">
+          <div key={course._id} className="bg-slate-900 border border-indigo-900/30 rounded-lg overflow-hidden p-6 flex flex-col relative group hover:border-indigo-600/50 transition">
             <div className="flex items-center space-x-4 mb-4">
-              <img src={course.icon} alt={course.title} className="w-16 h-16 object-cover rounded bg-[#111]" />
+              <img src={course.icon} alt={course.title} className="w-16 h-16 object-cover rounded bg-slate-800" />
               <div>
-                <h3 className="font-bold text-xl text-gray-200">{course.title}</h3>
-                <span className="inline-block bg-red-900/30 text-red-400 px-2 py-1 rounded text-sm font-bold mt-1">
+                <h3 className="font-bold text-xl text-slate-200">{course.title}</h3>
+                <span className="inline-block bg-indigo-900/30 text-indigo-400 px-2 py-1 rounded text-sm font-bold mt-1">
                   ${course.price}
                 </span>
               </div>
             </div>
-            <p className="text-gray-400 text-sm mb-6 flex-1 line-clamp-4">{course.description}</p>
+            <p className="text-slate-400 text-sm mb-6 flex-1 line-clamp-4">{course.description}</p>
             
-            <div className="flex justify-end space-x-2 border-t border-red-900/20 pt-4 mt-auto">
+            <div className="flex justify-end space-x-2 border-t border-indigo-900/20 pt-4 mt-auto">
               <button 
                 onClick={() => handleOpenEdit(course)}
-                className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded transition"
+                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition"
               >
                 <Edit size={18} />
               </button>
               <button 
                 onClick={() => handleDelete(course._id)}
-                className="p-2 bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white rounded transition"
+                className="p-2 bg-indigo-900/50 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded transition"
               >
                 <Trash2 size={18} />
               </button>
             </div>
           </div>
         ))}
-        {courses.length === 0 && <p className="text-gray-500 col-span-full">No courses found.</p>}
+        {courses.length === 0 && <p className="text-slate-500 col-span-full">No courses found.</p>}
       </div>
 
       <Modal 
@@ -113,49 +113,49 @@ const Courses = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-400 mb-1">Title</label>
+            <label className="block text-slate-400 mb-1">Title</label>
             <input 
               type="text" 
               required
-              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200"
+              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 text-slate-200"
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-gray-400 mb-1">Description</label>
+            <label className="block text-slate-400 mb-1">Description</label>
             <textarea 
               required
-              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200 h-24"
+              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 text-slate-200 h-24"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-gray-400 mb-1">Price</label>
+            <label className="block text-slate-400 mb-1">Price</label>
             <input 
               type="number" 
               step="0.01"
               required
-              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 text-gray-200"
+              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 text-slate-200"
               value={formData.price}
               onChange={(e) => setFormData({...formData, price: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-gray-400 mb-1">Icon/Image</label>
+            <label className="block text-slate-400 mb-1">Icon/Image</label>
             <input 
               type="file" 
               accept="image/*"
-              className="w-full p-2 rounded bg-[#111] border border-red-900/50 focus:outline-none text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-red-900/30 file:text-red-400 hover:file:bg-red-900/50 transition"
+              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-900/30 file:text-indigo-400 hover:file:bg-indigo-900/50 transition"
               onChange={(e) => setFormData({...formData, icon: e.target.files[0]})}
             />
-            {editingCourse && !formData.icon && <p className="text-sm text-gray-500 mt-1">Leave empty to keep current icon</p>}
+            {editingCourse && !formData.icon && <p className="text-sm text-slate-500 mt-1">Leave empty to keep current icon</p>}
           </div>
           <button 
             type="submit" 
             disabled={isAdding || isUpdating}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold p-2 rounded transition disabled:opacity-50 mt-4"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2 rounded transition disabled:opacity-50 mt-4"
           >
             {isAdding || isUpdating ? 'Saving...' : 'Save Course'}
           </button>

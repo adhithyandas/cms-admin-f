@@ -28,16 +28,16 @@ const Dashboard = () => {
     <div>
       <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-          <h2 className="text-gray-400 text-lg mb-2">Total Posts</h2>
+        <div className="bg-slate-800 p-6 rounded-lg shadow-lg border border-gray-700">
+          <h2 className="text-slate-400 text-lg mb-2">Total Posts</h2>
           <p className="text-4xl font-bold text-purple-400">{stats.posts}</p>
         </div>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-          <h2 className="text-gray-400 text-lg mb-2">Total Courses</h2>
+        <div className="bg-slate-800 p-6 rounded-lg shadow-lg border border-gray-700">
+          <h2 className="text-slate-400 text-lg mb-2">Total Courses</h2>
           <p className="text-4xl font-bold text-blue-400">{stats.courses}</p>
         </div>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-          <h2 className="text-gray-400 text-lg mb-2">Messages</h2>
+        <div className="bg-slate-800 p-6 rounded-lg shadow-lg border border-gray-700">
+          <h2 className="text-slate-400 text-lg mb-2">Messages</h2>
           <p className="text-4xl font-bold text-green-400">{stats.messages}</p>
         </div>
       </div>
