@@ -20,32 +20,34 @@ const Login = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-slate-950 text-slate-200">
-      <div className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 border border-indigo-900/30">
+    <div className="flex h-screen items-center justify-center bg-slate-50 text-slate-900">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-96 border border-indigo-200">
         <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">Admin Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block mb-1 text-slate-400">Email</label>
+            <label className="block mb-1 text-slate-600">Email</label>
             <input
               type="email"
-              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 transition-colors"
+              className="w-full p-2 rounded bg-slate-100 border border-indigo-200 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 transition-colors"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
+
           <div>
-            <label className="block mb-1 text-slate-400">Password</label>
+            <label className="block mb-1 text-slate-600">Password</label>
             <input
               type="password"
-              className="w-full p-2 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 transition-colors"
+              className="w-full p-2 rounded bg-slate-100 border border-indigo-200 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600/50 transition-colors"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isPending}
             className={`w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded font-bold transition ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
           >

@@ -37,13 +37,13 @@ const Gallery = () => {
     }
   };
 
-  if (isLoading) return <div className="text-slate-400">Loading gallery...</div>;
+  if (isLoading) return <div className="text-slate-600">Loading gallery...</div>;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-indigo-600">Gallery</h1>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded font-bold transition"
         >
@@ -54,10 +54,11 @@ const Gallery = () => {
 
       <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
         {gallery.map(item => (
-          <div key={item._id} className="relative group rounded-lg overflow-hidden break-inside-avoid shadow-lg bg-slate-800">
+          <div key={item._id} className="relative group rounded-lg overflow-hidden break-inside-avoid shadow-lg bg-slate-100">
             <img src={item.image} alt="Gallery item" className="w-full h-auto block" />
-            <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button 
+
+            <div className="absolute inset-0 bg-slate-100/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <button
                 onClick={() => handleDelete(item._id)}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transform hover:scale-110 transition"
               >
@@ -67,26 +68,32 @@ const Gallery = () => {
           </div>
         ))}
       </div>
+
       {gallery.length === 0 && <p className="text-slate-500">No images found in the gallery.</p>}
 
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         title="Upload Image to Gallery"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-slate-400 mb-2">Select Image</label>
-            <input 
-              type="file" 
+            <label className="block text-slate-600 mb-2">Select Image</label>
+            {imageFile instanceof File ? (
+              <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-full h-auto max-h-64 object-contain rounded mb-4 border border-indigo-200 bg-white" />
+            ) : null}
+
+            <input
+              type="file"
               accept="image/*"
               required
-              className="w-full p-4 rounded bg-slate-800 border border-indigo-900/50 focus:outline-none text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-900/30 file:text-indigo-400 hover:file:bg-indigo-900/50 transition cursor-pointer"
+              className="w-full p-4 rounded bg-slate-100 border border-indigo-200 focus:outline-none text-slate-800 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition cursor-pointer"
               onChange={(e) => setImageFile(e.target.files[0])}
             />
           </div>
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isAdding}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-3 rounded transition disabled:opacity-50"
           >
