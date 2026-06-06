@@ -1,12 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { getCourse, addCourse, updateCourse, deleteCourse } from '../lib/api/course';
 
-export const useCourseQuery = () => {
-  return useQuery({
+export const useCourseQuery = () => useQuery({
     queryKey: ['course'],
     queryFn: getCourse,
   });
-};
 
 export const useAddCourseMutation = () => {
   const queryClient = useQueryClient();

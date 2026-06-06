@@ -1,12 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { getGallery, addGallery, deleteGallery } from '../lib/api/gallery';
 
-export const useGalleryQuery = () => {
-  return useQuery({
+export const useGalleryQuery = () => useQuery({
     queryKey: ['gallery'],
     queryFn: getGallery,
   });
-};
 
 export const useAddGalleryMutation = () => {
   const queryClient = useQueryClient();
