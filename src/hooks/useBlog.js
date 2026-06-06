@@ -1,12 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { getBlog, addBlog, updateBlog, deleteBlog } from '../lib/api/blog';
 
-export const useBlogQuery = () => {
-  return useQuery({
+export const useBlogQuery = () => useQuery({
     queryKey: ['blog'],
     queryFn: getBlog,
   });
-};
 
 export const useAddBlogMutation = () => {
   const queryClient = useQueryClient();
