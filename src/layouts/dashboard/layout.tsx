@@ -43,6 +43,11 @@ export function DashboardLayout({
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
+  const { value: collapsed, onToggle: onToggleCollapse } = useBoolean(false);
+
+  const NAV_WIDTH = 300;
+  const NAV_COLLAPSED_WIDTH = 88;
+
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
       container: {
@@ -63,6 +68,7 @@ export function DashboardLayout({
             onClick={onOpen}
             sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
           />
+
           <NavMobile data={navData} open={open} onClose={onClose} />
         </>
       ),
@@ -78,7 +84,14 @@ export function DashboardLayout({
         {...slotProps?.header}
         slots={{ ...headerSlots, ...slotProps?.header?.slots }}
         slotProps={merge(headerSlotProps, slotProps?.header?.slotProps ?? {})}
-        sx={slotProps?.header?.sx}
+        sx={[
+          (t) => ({
+            [t.breakpoints.up(layoutQuery)]: {
+              display: 'none',
+            },
+          }),
+          ...(slotProps?.header?.sx ? (Array.isArray(slotProps.header.sx) ? slotProps.header.sx : [slotProps.header.sx]) : []),
+        ]}
       />
     );
   };
@@ -97,7 +110,7 @@ export function DashboardLayout({
        * @Sidebar
        *************************************** */
       sidebarSection={
-        <NavDesktop data={navData} layoutQuery={layoutQuery} />
+        <NavDesktop data={navData} layoutQuery={layoutQuery} collapsed={collapsed} onToggleCollapse={onToggleCollapse} />
       }
       /** **************************************
        * @Footer
@@ -106,7 +119,11 @@ export function DashboardLayout({
       /** **************************************
        * @Styles
        *************************************** */
-      cssVars={{ ...dashboardLayoutVars(theme), ...cssVars }}
+      cssVars={{
+        ...dashboardLayoutVars(theme),
+        '--layout-nav-vertical-width': `${collapsed ? NAV_COLLAPSED_WIDTH : NAV_WIDTH}px`,
+        ...cssVars,
+      }}
       sx={[
         {
           [`& .${layoutClasses.sidebarContainer}`]: {

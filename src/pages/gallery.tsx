@@ -2,19 +2,16 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableCell from '@mui/material/TableCell';
+import Backdrop from '@mui/material/Backdrop';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { useGalleryQuery, useAddGalleryMutation, useDeleteGalleryMutation } from 'src/hooks/useGallery';
 
@@ -26,12 +23,22 @@ import { Scrollbar } from 'src/components/scrollbar';
 // ----------------------------------------------------------------------
 
 export default function Page() {
-  const { data: gallery = [], isLoading } = useGalleryQuery();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const { data: response, isLoading, isFetching } = useGalleryQuery(page + 1, rowsPerPage);
   const { mutateAsync: addGallery, isPending: isAdding } = useAddGalleryMutation();
-  const { mutateAsync: deleteGallery } = useDeleteGalleryMutation();
+  const { mutateAsync: deleteGallery, isPending: isDeleting } = useDeleteGalleryMutation();
+
+  const isWorking = isFetching || isAdding || isDeleting;
+
+  const gallery = response?.data || [];
+  const total = response?.total || 0;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,14 +60,15 @@ export default function Page() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this image?')) {
-      await deleteGallery(id);
+  const handleDelete = async () => {
+    if (deleteId) {
+      await deleteGallery(deleteId);
+      setDeleteId(null);
     }
   };
 
-  if (isLoading) {
-    return <DashboardContent><Typography>Loading gallery...</Typography></DashboardContent>;
+  if (isLoading && page === 0) {
+    return <DashboardContent />;
   }
 
   return (
@@ -68,7 +76,18 @@ export default function Page() {
       <title>Gallery - Admin</title>
 
       <DashboardContent>
-        <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+        <Box sx={(theme) => ({ 
+          mb: 3, 
+          display: 'flex', 
+          alignItems: 'center',
+          position: 'sticky',
+          top: 16,
+          zIndex: 10,
+          backgroundColor: 'background.paper',
+          p: 2,
+          borderRadius: 2,
+          boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
+        })}>
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             Gallery
           </Typography>
@@ -82,46 +101,77 @@ export default function Page() {
           </Button>
         </Box>
 
-        <Card>
-          <Scrollbar>
-            <TableContainer sx={{ overflow: 'unset' }}>
-              <Table sx={{ minWidth: 800 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Image</TableCell>
-                    <TableCell>ID</TableCell>
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {gallery.map((item: any) => (
-                    <TableRow hover key={item._id}>
-                      <TableCell>
-                        <Box component="img" src={item.image} sx={{ width: 64, height: 64, borderRadius: 1, objectFit: 'cover' }} />
-                      </TableCell>
-                      <TableCell sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>{item._id}</TableCell>
-                      <TableCell align="right">
-                        <IconButton onClick={() => handleDelete(item._id)} size="small" sx={{ color: 'error.main' }}>
-                          <Iconify icon="solar:trash-bin-trash-bold" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {gallery.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                          No images found in the gallery.
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+        <Card sx={{ p: 3 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 3,
+              gridTemplateColumns: {
+                xs: 'repeat(2, 1fr)',
+                sm: 'repeat(3, 1fr)',
+                md: 'repeat(4, 1fr)',
+                lg: 'repeat(5, 1fr)',
+              },
+            }}
+          >
+            {gallery.map((item: any) => (
+              <Box 
+                key={item._id} 
+                sx={{ 
+                  position: 'relative', 
+                  borderRadius: 2, 
+                  overflow: 'hidden', 
+                  aspectRatio: '1/1',
+                  boxShadow: '0 0 0 1px rgba(0,0,0,0.05)'
+                }}
+              >
+                <Box 
+                  component="img" 
+                  src={item.image} 
+                  sx={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} 
+                  onClick={() => setPreviewImage(item.image)}
+                />
+                <IconButton 
+                  onClick={() => setDeleteId(item._id)} 
+                  size="small" 
+                  sx={{ 
+                    position: 'absolute', 
+                    top: 8, 
+                    right: 8, 
+                    color: 'error.main', 
+                    bgcolor: 'rgba(255,255,255,0.8)',
+                    backdropFilter: 'blur(4px)',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,1)' }
+                  }}
+                >
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+
+          {gallery.length === 0 && (
+            <Box sx={{ py: 10, textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                No images found in the gallery.
+              </Typography>
+            </Box>
+          )}
+          <TablePagination
+            component="div"
+            count={total}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 20, 25, 50]}
+          />
         </Card>
 
+        {/* Upload Modal */}
         <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth maxWidth="sm">
           <DialogTitle>Upload Image to Gallery</DialogTitle>
           <form onSubmit={handleSubmit}>
@@ -149,6 +199,32 @@ export default function Page() {
             </DialogActions>
           </form>
         </Dialog>
+
+        {/* Delete Confirmation */}
+        <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            <Typography>Are you sure you want to delete this image? This action cannot be undone.</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteId(null)}>Cancel</Button>
+            <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
+          {previewImage && (
+            <Box 
+              component="img" 
+              src={previewImage} 
+              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+            />
+          )}
+        </Dialog>
+
+        <Backdrop open={isWorking} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, color: '#fff' }}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </DashboardContent>
     </>
   );

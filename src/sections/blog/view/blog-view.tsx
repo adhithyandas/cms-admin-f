@@ -6,18 +6,22 @@ import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import TableRow from '@mui/material/TableRow';
+import Backdrop from '@mui/material/Backdrop';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import { useBlogQuery, useAddBlogMutation, useUpdateBlogMutation, useDeleteBlogMutation } from 'src/hooks/useBlog';
+import { useRouter } from 'src/routes/hooks';
+
+import { useBlogQuery, useDeleteBlogMutation } from 'src/hooks/useBlog';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -27,65 +31,45 @@ import { Scrollbar } from 'src/components/scrollbar';
 // ----------------------------------------------------------------------
 
 export function BlogView() {
-  const { data: blogs = [], isLoading } = useBlogQuery();
-  const { mutateAsync: addBlog, isPending: isAdding } = useAddBlogMutation();
-  const { mutateAsync: updateBlog, isPending: isUpdating } = useUpdateBlogMutation();
-  const { mutateAsync: deleteBlog } = useDeleteBlogMutation();
+  const router = useRouter();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const { data: response, isLoading, isFetching } = useBlogQuery(page + 1, rowsPerPage);
+  const { mutateAsync: deleteBlog, isPending: isDeleting } = useDeleteBlogMutation();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<any>(null);
-  const [formData, setFormData] = useState({ title: '', description: '', thumbnail: null as File | null });
+  const isWorking = isFetching || isDeleting;
 
-  const handleOpenAdd = () => {
-    setEditingBlog(null);
-    setFormData({ title: '', description: '', thumbnail: null });
-    setIsModalOpen(true);
-  };
+  const blogs = response?.data || [];
+  const total = response?.total || 0;
 
-  const handleOpenEdit = (blog: any) => {
-    setEditingBlog(blog);
-    setFormData({ title: blog.title, description: blog.description, thumbnail: null });
-    setIsModalOpen(true);
-  };
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fd = new FormData();
-    fd.append('title', formData.title);
-    fd.append('description', formData.description);
-    if (formData.thumbnail) {
-      fd.append('thumbnail', formData.thumbnail);
-    } else if (!editingBlog) {
-      alert('Please upload a thumbnail');
-      return;
-    }
-
-    try {
-      if (editingBlog) {
-        await updateBlog({ id: editingBlog._id, formData: fd });
-      } else {
-        await addBlog(fd);
-      }
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert('Operation failed');
+  const handleDelete = async () => {
+    if (deleteId) {
+      await deleteBlog(deleteId);
+      setDeleteId(null);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this blog?')) {
-      await deleteBlog(id);
-    }
-  };
-
-  if (isLoading) {
-    return <DashboardContent><Typography>Loading blogs...</Typography></DashboardContent>;
+  if (isLoading && page === 0) {
+    return <DashboardContent />;
   }
 
   return (
     <DashboardContent>
-      <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+      <Box sx={(theme) => ({ 
+        mb: 3, 
+        display: 'flex', 
+        alignItems: 'center',
+        position: 'sticky',
+        top: 16,
+        zIndex: 10,
+        backgroundColor: 'background.paper',
+        p: 2,
+        borderRadius: 2,
+        boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
+      })}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           Blog Posts
         </Typography>
@@ -93,7 +77,7 @@ export function BlogView() {
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={handleOpenAdd}
+          onClick={() => router.push('/blog/new')}
         >
           New post
         </Button>
@@ -113,19 +97,31 @@ export function BlogView() {
               </TableHead>
               <TableBody>
                 {blogs.map((blog: any) => (
-                  <TableRow hover key={blog._id}>
+                  <TableRow 
+                    key={blog._id}
+                    sx={{
+                      '&:nth-of-type(even)': {
+                        backgroundColor: 'background.default',
+                      },
+                    }}
+                  >
                     <TableCell>
-                      <Box component="img" src={blog.thumbnail} sx={{ width: 64, height: 48, borderRadius: 1, objectFit: 'cover' }} />
+                      <Box 
+                        component="img" 
+                        src={blog.thumbnail} 
+                        sx={{ width: 64, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }} 
+                        onClick={() => setPreviewImage(blog.thumbnail)}
+                      />
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'fontWeightMedium' }}>{blog.title}</TableCell>
                     <TableCell sx={{ maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {blog.description}
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => handleOpenEdit(blog)} size="small" sx={{ mr: 1 }}>
+                      <IconButton onClick={() => router.push(`/blog/${blog._id}`)} size="small" sx={{ mr: 1 }}>
                         <Iconify icon="solar:pen-bold" />
                       </IconButton>
-                      <IconButton onClick={() => handleDelete(blog._id)} size="small" sx={{ color: 'error.main' }}>
+                      <IconButton onClick={() => setDeleteId(blog._id)} size="small" sx={{ color: 'error.main' }}>
                         <Iconify icon="solar:trash-bin-trash-bold" />
                       </IconButton>
                     </TableCell>
@@ -144,57 +140,44 @@ export function BlogView() {
             </Table>
           </TableContainer>
         </Scrollbar>
+        <TablePagination
+          component="div"
+          count={total}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[5, 10, 20, 25, 50]}
+        />
       </Card>
 
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>{editingBlog ? 'Edit Blog' : 'Add New Blog'}</DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
-              <TextField
-                label="Title"
-                fullWidth
-                required
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-              <TextField
-                label="Description"
-                fullWidth
-                required
-                multiline
-                rows={4}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>Thumbnail Image</Typography>
-                {formData.thumbnail instanceof File ? (
-                  <Box component="img" src={URL.createObjectURL(formData.thumbnail)} sx={{ width: 1, height: 200, objectFit: 'cover', borderRadius: 1, mb: 2 }} />
-                ) : editingBlog?.thumbnail ? (
-                  <Box component="img" src={editingBlog.thumbnail} sx={{ width: 1, height: 200, objectFit: 'cover', borderRadius: 1, mb: 2 }} />
-                ) : null}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.files ? e.target.files[0] : null })}
-                />
-                {editingBlog && !formData.thumbnail && (
-                  <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>
-                    Leave empty to keep current thumbnail
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="contained" disabled={isAdding || isUpdating}>
-              {isAdding || isUpdating ? 'Saving...' : 'Save'}
-            </Button>
-          </DialogActions>
-        </form>
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this blog post? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteId(null)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
+        </DialogActions>
       </Dialog>
+
+      <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
+        {previewImage && (
+          <Box 
+            component="img" 
+            src={previewImage} 
+            sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+          />
+        )}
+      </Dialog>
+
+      <Backdrop open={isWorking} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, color: '#fff' }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </DashboardContent>
   );
 }

@@ -51,7 +51,14 @@ export function SignInView() {
         label="Email address"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        sx={{ mb: 3 }}
+        sx={{ 
+          mb: 3,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderWidth: '1px !important',
+            borderStyle: 'solid !important',
+            borderColor: 'var(--palette-divider) !important',
+          },
+        }}
         slotProps={{
           inputLabel: { shrink: true },
         }}
@@ -76,7 +83,14 @@ export function SignInView() {
             ),
           },
         }}
-        sx={{ mb: 3 }}
+        sx={{ 
+          mb: 3,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderWidth: '1px !important',
+            borderStyle: 'solid !important',
+            borderColor: 'var(--palette-divider) !important',
+          },
+        }}
       />
 
       <Button

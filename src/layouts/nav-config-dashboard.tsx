@@ -1,8 +1,8 @@
-import { SvgColor } from 'src/components/svg-color';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-const icon = (name: string) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} />;
+const icon = (name: string) => <Iconify icon={name as any} width={24} height={24} />;
 
 export type NavItem = {
   title: string;
@@ -15,16 +15,16 @@ export const navData = [
   {
     title: 'Blog',
     path: '/blog',
-    icon: icon('ic-blog'),
+    icon: icon('solar:document-text-bold-duotone'),
   },
   {
     title: 'Courses',
     path: '/courses',
-    icon: icon('ic-user'),
+    icon: icon('solar:notebook-bold-duotone'),
   },
   {
     title: 'Gallery',
     path: '/gallery',
-    icon: icon('ic-cart'),
+    icon: icon('solar:gallery-bold-duotone'),
   },
 ];

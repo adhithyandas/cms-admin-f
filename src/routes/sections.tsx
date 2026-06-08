@@ -13,7 +13,9 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 // ----------------------------------------------------------------------
 
 export const BlogPage = lazy(() => import('src/pages/blog'));
+export const BlogDetailPage = lazy(() => import('src/pages/blog-detail'));
 export const CoursesPage = lazy(() => import('src/pages/courses'));
+export const CourseDetailPage = lazy(() => import('src/pages/course-detail'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const GalleryPage = lazy(() => import('src/pages/gallery'));
 
@@ -57,7 +59,9 @@ export const routesSection: RouteObject[] = [
     children: [
       { path: 'home', element: <Navigate to="/blog" replace /> },
       { path: 'blog', element: <BlogPage /> },
+      { path: 'blog/:id', element: <BlogDetailPage /> },
       { path: 'courses', element: <CoursesPage /> },
+      { path: 'courses/:id', element: <CourseDetailPage /> },
       { path: 'gallery', element: <GalleryPage /> },
     ],
   },

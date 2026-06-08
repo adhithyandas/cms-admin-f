@@ -4,6 +4,9 @@ import { merge } from 'es-toolkit';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+
+import { CONFIG } from 'src/config-global';
 
 import { Logo } from 'src/components/logo';
 
@@ -47,10 +50,12 @@ export function AuthLayout({
         </Alert>
       ),
       leftArea: (
-        <>
-          {/** @slot Logo */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Logo />
-        </>
+          <Typography variant="h6" sx={{ fontWeight: 'fontWeightBold' }}>
+            {CONFIG.appName}
+          </Typography>
+        </Box>
       ),
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }} />

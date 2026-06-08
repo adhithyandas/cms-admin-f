@@ -1,11 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getCourse, addCourse, updateCourse, deleteCourse } from '../lib/api/course';
+import { getCourse, addCourse, updateCourse, deleteCourse, getCourseById } from '../lib/api/course';
 
-export const useCourseQuery = () => useQuery({
-    queryKey: ['course'],
-    queryFn: getCourse,
-  });
+export const useCourseQuery = (page = 1, limit = 20) => useQuery({
+  queryKey: ['course', page, limit],
+  queryFn: () => getCourse(page, limit),
+});
+
+export const useCourseByIdQuery = (id) => useQuery({
+  queryKey: ['course', id],
+  queryFn: () => getCourseById(id),
+  enabled: !!id && id !== 'new',
+});
 
 export const useAddCourseMutation = () => {
   const queryClient = useQueryClient();

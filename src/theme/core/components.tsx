@@ -6,6 +6,15 @@ import SvgIcon from '@mui/material/SvgIcon';
 
 // ----------------------------------------------------------------------
 
+const MuiAppBar: Components<Theme>['MuiAppBar'] = {
+  styleOverrides: {
+    root: {
+      boxShadow: 'none',
+      border: 'none',
+    },
+  },
+};
+
 const MuiBackdrop: Components<Theme>['MuiBackdrop'] = {
   styleOverrides: {
     root: ({ theme }) => ({
@@ -41,7 +50,8 @@ const MuiCard: Components<Theme>['MuiCard'] = {
     root: ({ theme }) => ({
       zIndex: 0,
       position: 'relative',
-      boxShadow: theme.vars.customShadows.card,
+      boxShadow: 'none',
+      border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
       borderRadius: Number(theme.shape.borderRadius) * 2,
     }),
   },
@@ -70,7 +80,11 @@ const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
 const MuiPaper: Components<Theme>['MuiPaper'] = {
   defaultProps: { elevation: 0 },
   styleOverrides: {
-    root: { backgroundImage: 'none' },
+    root: ({ theme }) => ({
+      backgroundImage: 'none',
+      boxShadow: 'none',
+      border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+    }),
     outlined: ({ theme }) => ({
       borderColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
     }),
@@ -79,12 +93,29 @@ const MuiPaper: Components<Theme>['MuiPaper'] = {
 
 const MuiTableCell: Components<Theme>['MuiTableCell'] = {
   styleOverrides: {
+    root: ({ theme }) => ({
+      padding: theme.spacing(1, 1),
+    }),
     head: ({ theme }) => ({
       fontSize: theme.typography.pxToRem(14),
       color: theme.vars.palette.text.secondary,
       fontWeight: theme.typography.fontWeightSemiBold,
       backgroundColor: theme.vars.palette.background.neutral,
     }),
+  },
+};
+
+const MuiTablePagination: Components<Theme>['MuiTablePagination'] = {
+  styleOverrides: {
+    root: { borderTop: 'none' },
+    toolbar: { minHeight: 48 },
+  },
+};
+
+const MuiToolbar: Components<Theme>['MuiToolbar'] = {
+  defaultProps: { disableGutters: true },
+  styleOverrides: {
+    root: { minHeight: 48 },
   },
 };
 
@@ -160,12 +191,15 @@ export const components = {
   MuiLink,
   MuiPaper,
   MuiRadio,
+  MuiAppBar,
   MuiButton,
+  MuiToolbar,
   MuiBackdrop,
   MuiMenuItem,
   MuiCheckbox,
   MuiTableCell,
   MuiCardHeader,
   MuiOutlinedInput,
+  MuiTablePagination,
   MuiFormControlLabel,
 };

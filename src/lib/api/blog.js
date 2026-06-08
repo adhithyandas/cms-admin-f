@@ -1,7 +1,12 @@
 import axiosInstance from '../axios';
 
-export const getBlog = async () => {
-  const { data } = await axiosInstance.get('/blog');
+export const getBlog = async (page = 1, limit = 20) => {
+  const { data } = await axiosInstance.get('/blog', { params: { page, limit } });
+  return data;
+};
+
+export const getBlogById = async (id) => {
+  const { data } = await axiosInstance.get(`/blog/${id}`);
   return data;
 };
 

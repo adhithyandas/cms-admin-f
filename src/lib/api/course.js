@@ -1,7 +1,12 @@
 import axiosInstance from '../axios';
 
-export const getCourse = async () => {
-  const { data } = await axiosInstance.get('/course');
+export const getCourse = async (page = 1, limit = 20) => {
+  const { data } = await axiosInstance.get('/course', { params: { page, limit } });
+  return data;
+};
+
+export const getCourseById = async (id) => {
+  const { data } = await axiosInstance.get(`/course/${id}`);
   return data;
 };
 

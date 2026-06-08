@@ -1,7 +1,7 @@
 import axiosInstance from '../axios';
 
-export const getGallery = async () => {
-  const { data } = await axiosInstance.get('/gallery');
+export const getGallery = async (page = 1, limit = 20) => {
+  const { data } = await axiosInstance.get('/gallery', { params: { page, limit } });
   return data;
 };
 

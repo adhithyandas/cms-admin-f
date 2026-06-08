@@ -6,83 +6,52 @@ import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import TableRow from '@mui/material/TableRow';
+import Backdrop from '@mui/material/Backdrop';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import { useCourseQuery, useAddCourseMutation, useUpdateCourseMutation, useDeleteCourseMutation } from 'src/hooks/useCourse';
+import { useRouter } from 'src/routes/hooks';
+
+import { useCourseQuery, useDeleteCourseMutation } from 'src/hooks/useCourse';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-// ----------------------------------------------------------------------
-
 export default function Page() {
-  const { data: courses = [], isLoading } = useCourseQuery();
-  const { mutateAsync: addCourse, isPending: isAdding } = useAddCourseMutation();
-  const { mutateAsync: updateCourse, isPending: isUpdating } = useUpdateCourseMutation();
-  const { mutateAsync: deleteCourse } = useDeleteCourseMutation();
+  const router = useRouter();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const { data: response, isLoading, isFetching } = useCourseQuery(page + 1, rowsPerPage);
+  const { mutateAsync: deleteCourse, isPending: isDeleting } = useDeleteCourseMutation();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<any>(null);
-  const [formData, setFormData] = useState({ title: '', description: '', price: '', icon: null as File | null });
+  const isWorking = isFetching || isDeleting;
 
-  const handleOpenAdd = () => {
-    setEditingCourse(null);
-    setFormData({ title: '', description: '', price: '', icon: null });
-    setIsModalOpen(true);
-  };
+  const courses = response?.data || [];
+  const total = response?.total || 0;
 
-  const handleOpenEdit = (course: any) => {
-    setEditingCourse(course);
-    setFormData({ title: course.title, description: course.description, price: course.price, icon: null });
-    setIsModalOpen(true);
-  };
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fd = new FormData();
-    fd.append('title', formData.title);
-    fd.append('description', formData.description);
-    fd.append('price', formData.price);
-
-    if (formData.icon) {
-      fd.append('icon', formData.icon);
-    } else if (!editingCourse) {
-      alert('Please upload an icon');
-      return;
-    }
-
-    try {
-      if (editingCourse) {
-        await updateCourse({ id: editingCourse._id, formData: fd });
-      } else {
-        await addCourse(fd);
-      }
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert('Operation failed');
+  const handleDelete = async () => {
+    if (deleteId) {
+      await deleteCourse(deleteId);
+      setDeleteId(null);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
-      await deleteCourse(id);
-    }
-  };
-
-  if (isLoading) {
-    return <DashboardContent><Typography>Loading courses...</Typography></DashboardContent>;
+  if (isLoading && page === 0) {
+    return <DashboardContent />;
   }
 
   return (
@@ -90,15 +59,27 @@ export default function Page() {
       <title>Courses - Admin</title>
 
       <DashboardContent>
-        <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
+        <Box sx={(theme) => ({
+          mb: 3,
+          display: 'flex',
+          alignItems: 'center',
+          position: 'sticky',
+          top: 16,
+          zIndex: 10,
+          backgroundColor: 'background.paper',
+          p: 2,
+          borderRadius: 2,
+          boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
+        })}>
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             Courses
           </Typography>
+
           <Button
             variant="contained"
             color="inherit"
             startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={handleOpenAdd}
+            onClick={() => router.push('/courses/new')}
           >
             Add Course
           </Button>
@@ -117,27 +98,45 @@ export default function Page() {
                     <TableCell align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
                   {courses.map((course: any) => (
-                    <TableRow hover key={course._id}>
+                    <TableRow
+                      key={course._id}
+                      sx={{
+                        '&:nth-of-type(even)': {
+                          backgroundColor: 'background.default',
+                        },
+                      }}
+                    >
                       <TableCell>
-                        <Box component="img" src={course.icon} sx={{ width: 48, height: 48, borderRadius: 1, objectFit: 'cover' }} />
+                        <Box 
+                          component="img" 
+                          src={course.icon} 
+                          sx={{ width: 48, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }} 
+                          onClick={() => setPreviewImage(course.icon)}
+                        />
                       </TableCell>
+
                       <TableCell sx={{ fontWeight: 'fontWeightMedium' }}>{course.title}</TableCell>
+
                       <TableCell sx={{ maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {course.description}
                       </TableCell>
+
                       <TableCell>${course.price}</TableCell>
                       <TableCell align="right">
-                        <IconButton onClick={() => handleOpenEdit(course)} size="small" sx={{ mr: 1 }}>
+                        <IconButton onClick={() => router.push(`/courses/${course._id}`)} size="small" sx={{ mr: 1 }}>
                           <Iconify icon="solar:pen-bold" />
                         </IconButton>
-                        <IconButton onClick={() => handleDelete(course._id)} size="small" sx={{ color: 'error.main' }}>
+
+                        <IconButton onClick={() => setDeleteId(course._id)} size="small" sx={{ color: 'error.main' }}>
                           <Iconify icon="solar:trash-bin-trash-bold" />
                         </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
+
                   {courses.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
@@ -151,66 +150,47 @@ export default function Page() {
               </Table>
             </TableContainer>
           </Scrollbar>
+
+          <TablePagination
+            component="div"
+            count={total}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 20, 25, 50]}
+          />
         </Card>
 
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth maxWidth="sm">
-          <DialogTitle>{editingCourse ? 'Edit Course' : 'Add New Course'}</DialogTitle>
-          <form onSubmit={handleSubmit}>
-            <DialogContent>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
-                <TextField
-                  label="Title"
-                  fullWidth
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                />
-                <TextField
-                  label="Description"
-                  fullWidth
-                  required
-                  multiline
-                  rows={4}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-                <TextField
-                  label="Price"
-                  type="number"
-                  fullWidth
-                  required
-                  slotProps={{ htmlInput: { step: '0.01' } }}
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                />
-                <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Icon/Image</Typography>
-                  {formData.icon instanceof File ? (
-                    <Box component="img" src={URL.createObjectURL(formData.icon)} sx={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 1, mb: 2 }} />
-                  ) : editingCourse?.icon ? (
-                    <Box component="img" src={editingCourse.icon} sx={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 1, mb: 2 }} />
-                  ) : null}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setFormData({ ...formData, icon: e.target.files ? e.target.files[0] : null })}
-                  />
-                  {editingCourse && !formData.icon && (
-                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>
-                      Leave empty to keep current icon
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-              <Button type="submit" variant="contained" disabled={isAdding || isUpdating}>
-                {isAdding || isUpdating ? 'Saving...' : 'Save'}
-              </Button>
-            </DialogActions>
-          </form>
+        <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+
+          <DialogContent>
+            <Typography>Are you sure you want to delete this course? This action cannot be undone.</Typography>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => setDeleteId(null)}>Cancel</Button>
+            <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
+          </DialogActions>
         </Dialog>
+
+        <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
+          {previewImage && (
+            <Box 
+              component="img" 
+              src={previewImage} 
+              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+            />
+          )}
+        </Dialog>
+
+        <Backdrop open={isWorking} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, color: '#fff' }}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </DashboardContent>
     </>
   );
