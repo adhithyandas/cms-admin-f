@@ -71,6 +71,7 @@ export default function Page() {
           borderRadius: 2,
           boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
         })}>
+
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             Courses
           </Typography>
@@ -110,10 +111,10 @@ export default function Page() {
                       }}
                     >
                       <TableCell>
-                        <Box 
-                          component="img" 
-                          src={course.icon} 
-                          sx={{ width: 48, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }} 
+                        <Box
+                          component="img"
+                          src={course.icon}
+                          sx={{ width: 48, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }}
                           onClick={() => setPreviewImage(course.icon)}
                         />
                       </TableCell>
@@ -180,10 +181,10 @@ export default function Page() {
 
         <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
           {previewImage && (
-            <Box 
-              component="img" 
-              src={previewImage} 
-              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+            <Box
+              component="img"
+              src={previewImage}
+              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
             />
           )}
         </Dialog>

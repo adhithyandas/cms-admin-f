@@ -1,7 +1,5 @@
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 const icon = (name: string) => <Iconify icon={name as any} width={24} height={24} />;
 
 export type NavItem = {

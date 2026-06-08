@@ -22,7 +22,6 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import type { NavItem } from '../nav-config-dashboard';
-// ----------------------------------------------------------------------
 
 export type NavContentProps = {
   data: NavItem[];
@@ -99,8 +98,6 @@ export function NavDesktop({
   );
 }
 
-// ----------------------------------------------------------------------
-
 export function NavMobile({
   sx,
   data,
@@ -139,8 +136,6 @@ export function NavMobile({
   );
 }
 
-// ----------------------------------------------------------------------
-
 export function NavContent({ data, slots, sx, collapsed, onToggleCollapse }: NavContentProps) {
   const pathname = usePathname();
 
@@ -158,6 +153,7 @@ export function NavContent({ data, slots, sx, collapsed, onToggleCollapse }: Nav
         })}
       >
         <Logo />
+
         <Typography
           variant="h6"
           sx={(theme) => ({

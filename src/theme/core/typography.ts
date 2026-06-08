@@ -6,8 +6,6 @@ import { createTheme as getTheme } from '@mui/material/styles';
 
 import { themeConfig } from '../theme-config';
 
-// ----------------------------------------------------------------------
-
 /**
  * TypeScript (type definition and extension)
  * @to {@link file://./../extend-theme-types.d.ts}
@@ -37,8 +35,6 @@ function responsiveFontSizes(obj: ResponsiveFontSizesInput): ResponsiveFontSizes
     return acc;
   }, {} as ResponsiveFontSizesResult);
 }
-
-// ----------------------------------------------------------------------
 
 const primaryFont = setFont(themeConfig.fontFamily.primary);
 const secondaryFont = setFont(themeConfig.fontFamily.secondary);

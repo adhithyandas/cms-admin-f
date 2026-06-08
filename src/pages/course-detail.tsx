@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -76,9 +75,9 @@ export default function CourseDetailPage() {
       <title>{isEdit ? 'Edit Course' : 'New Course'} - Admin</title>
 
       <DashboardContent>
-        <Box sx={(theme) => ({ 
-          mb: 3, 
-          display: 'flex', 
+        <Box sx={(theme) => ({
+          mb: 3,
+          display: 'flex',
           alignItems: 'center',
           position: 'sticky',
           top: 16,
@@ -91,6 +90,7 @@ export default function CourseDetailPage() {
           <IconButton onClick={() => router.push('/courses')} sx={{ mr: 2 }}>
             <Iconify icon="eva:arrow-ios-back-fill" />
           </IconButton>
+
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             {isEdit ? 'Edit Course' : 'Create a new course'}
           </Typography>
@@ -107,6 +107,7 @@ export default function CourseDetailPage() {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
+
               <TextField
                 label="Description"
                 fullWidth
@@ -117,6 +118,7 @@ export default function CourseDetailPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
+
               <TextField
                 label="Price"
                 type="number"
@@ -127,20 +129,21 @@ export default function CourseDetailPage() {
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
+
               <Box>
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>Icon / Image</Typography>
                 {formData.icon instanceof File ? (
-                  <Box 
-                    component="img" 
-                    src={URL.createObjectURL(formData.icon)} 
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }} 
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(formData.icon)}
+                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
                     onClick={() => setPreviewImage(URL.createObjectURL(formData.icon!))}
                   />
                 ) : course?.icon ? (
-                  <Box 
-                    component="img" 
-                    src={course.icon} 
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }} 
+                  <Box
+                    component="img"
+                    src={course.icon}
+                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
                     onClick={() => setPreviewImage(course.icon)}
                   />
                 ) : null}
@@ -149,6 +152,7 @@ export default function CourseDetailPage() {
                   accept="image/*"
                   onChange={(e) => setFormData({ ...formData, icon: e.target.files ? e.target.files[0] : null })}
                 />
+
                 {isEdit && !formData.icon && (
                   <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>
                     Leave empty to keep current icon
@@ -168,10 +172,10 @@ export default function CourseDetailPage() {
 
         <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
           {previewImage && (
-            <Box 
-              component="img" 
-              src={previewImage} 
-              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+            <Box
+              component="img"
+              src={previewImage}
+              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
             />
           )}
         </Dialog>

@@ -4,8 +4,6 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import SvgIcon from '@mui/material/SvgIcon';
 
-// ----------------------------------------------------------------------
-
 const MuiAppBar: Components<Theme>['MuiAppBar'] = {
   styleOverrides: {
     root: {
@@ -183,8 +181,6 @@ const MuiRadio: Components<Theme>['MuiRadio'] = {
     ),
   },
 };
-
-// ----------------------------------------------------------------------
 
 export const components = {
   MuiCard,

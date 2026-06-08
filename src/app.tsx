@@ -6,9 +6,6 @@ import { usePathname } from 'src/routes/hooks';
 
 import { ThemeProvider } from 'src/theme/theme-provider';
 
-
-// ----------------------------------------------------------------------
-
 type AppProps = {
   children: React.ReactNode;
 };
@@ -20,8 +17,6 @@ const queryClient = new QueryClient();
 export default function App({ children }: AppProps) {
   useScrollToTop();
 
-
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -30,8 +25,6 @@ export default function App({ children }: AppProps) {
     </QueryClientProvider>
   );
 }
-
-// ----------------------------------------------------------------------
 
 function useScrollToTop() {
   const pathname = usePathname();

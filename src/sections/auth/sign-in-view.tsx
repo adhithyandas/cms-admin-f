@@ -13,8 +13,6 @@ import { useLoginMutation } from 'src/hooks/useAuth';
 
 import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export function SignInView() {
   const router = useRouter();
 

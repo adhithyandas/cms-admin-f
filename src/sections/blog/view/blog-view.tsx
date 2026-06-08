@@ -28,8 +28,6 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-// ----------------------------------------------------------------------
-
 export function BlogView() {
   const router = useRouter();
   const [page, setPage] = useState(0);
@@ -58,9 +56,9 @@ export function BlogView() {
 
   return (
     <DashboardContent>
-      <Box sx={(theme) => ({ 
-        mb: 3, 
-        display: 'flex', 
+      <Box sx={(theme) => ({
+        mb: 3,
+        display: 'flex',
         alignItems: 'center',
         position: 'sticky',
         top: 16,
@@ -73,6 +71,7 @@ export function BlogView() {
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           Blog Posts
         </Typography>
+
         <Button
           variant="contained"
           color="inherit"
@@ -95,9 +94,10 @@ export function BlogView() {
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {blogs.map((blog: any) => (
-                  <TableRow 
+                  <TableRow
                     key={blog._id}
                     sx={{
                       '&:nth-of-type(even)': {
@@ -106,27 +106,32 @@ export function BlogView() {
                     }}
                   >
                     <TableCell>
-                      <Box 
-                        component="img" 
-                        src={blog.thumbnail} 
-                        sx={{ width: 64, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }} 
+                      <Box
+                        component="img"
+                        src={blog.thumbnail}
+                        sx={{ width: 64, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }}
                         onClick={() => setPreviewImage(blog.thumbnail)}
                       />
                     </TableCell>
+
                     <TableCell sx={{ fontWeight: 'fontWeightMedium' }}>{blog.title}</TableCell>
+
                     <TableCell sx={{ maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {blog.description}
                     </TableCell>
+
                     <TableCell align="right">
                       <IconButton onClick={() => router.push(`/blog/${blog._id}`)} size="small" sx={{ mr: 1 }}>
                         <Iconify icon="solar:pen-bold" />
                       </IconButton>
+
                       <IconButton onClick={() => setDeleteId(blog._id)} size="small" sx={{ color: 'error.main' }}>
                         <Iconify icon="solar:trash-bin-trash-bold" />
                       </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
+
                 {blogs.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
@@ -140,6 +145,7 @@ export function BlogView() {
             </Table>
           </TableContainer>
         </Scrollbar>
+
         <TablePagination
           component="div"
           count={total}
@@ -159,6 +165,7 @@ export function BlogView() {
         <DialogContent>
           <Typography>Are you sure you want to delete this blog post? This action cannot be undone.</Typography>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={() => setDeleteId(null)}>Cancel</Button>
           <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
@@ -167,10 +174,10 @@ export function BlogView() {
 
       <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
         {previewImage && (
-          <Box 
-            component="img" 
-            src={previewImage} 
-            sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+          <Box
+            component="img"
+            src={previewImage}
+            sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
           />
         )}
       </Dialog>

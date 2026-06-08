@@ -9,7 +9,7 @@ export const useGalleryQuery = (page = 1, limit = 20) => useQuery({
 
 export const useAddGalleryMutation = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: addGallery,
     onSuccess: () => {
@@ -20,7 +20,7 @@ export const useAddGalleryMutation = () => {
 
 export const useDeleteGalleryMutation = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: deleteGallery,
     onSuccess: () => {

@@ -75,9 +75,9 @@ export default function BlogDetailPage() {
       <title>{isEdit ? 'Edit Post' : 'New Post'} - Admin</title>
 
       <DashboardContent>
-        <Box sx={(theme) => ({ 
-          mb: 3, 
-          display: 'flex', 
+        <Box sx={(theme) => ({
+          mb: 3,
+          display: 'flex',
           alignItems: 'center',
           position: 'sticky',
           top: 16,
@@ -90,6 +90,7 @@ export default function BlogDetailPage() {
           <IconButton onClick={() => router.push('/blog')} sx={{ mr: 2 }}>
             <Iconify icon="eva:arrow-ios-back-fill" />
           </IconButton>
+
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
             {isEdit ? 'Edit Post' : 'Create a new post'}
           </Typography>
@@ -106,6 +107,7 @@ export default function BlogDetailPage() {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
+
               <TextField
                 label="Content"
                 fullWidth
@@ -116,20 +118,21 @@ export default function BlogDetailPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
+
               <Box>
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>Thumbnail Image</Typography>
                 {formData.thumbnail instanceof File ? (
-                  <Box 
-                    component="img" 
-                    src={URL.createObjectURL(formData.thumbnail)} 
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }} 
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(formData.thumbnail)}
+                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
                     onClick={() => setPreviewImage(URL.createObjectURL(formData.thumbnail!))}
                   />
                 ) : blog?.thumbnail ? (
-                  <Box 
-                    component="img" 
-                    src={blog.thumbnail} 
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }} 
+                  <Box
+                    component="img"
+                    src={blog.thumbnail}
+                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
                     onClick={() => setPreviewImage(blog.thumbnail)}
                   />
                 ) : null}
@@ -147,6 +150,7 @@ export default function BlogDetailPage() {
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
                 <Button variant="outlined" onClick={() => router.push('/blog')}>Cancel</Button>
+
                 <Button type="submit" variant="contained" disabled={isAdding || isUpdating}>
                   {isAdding || isUpdating ? 'Saving...' : 'Save Changes'}
                 </Button>
@@ -157,10 +161,10 @@ export default function BlogDetailPage() {
 
         <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
           {previewImage && (
-            <Box 
-              component="img" 
-              src={previewImage} 
-              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }} 
+            <Box
+              component="img"
+              src={previewImage}
+              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
             />
           )}
         </Dialog>
