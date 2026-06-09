@@ -1,5 +1,3 @@
-import type { IconProps } from '@iconify/react';
-
 import { useId } from 'react';
 import { Icon } from '@iconify/react';
 import { mergeClasses } from 'minimal-shared/utils';
@@ -11,15 +9,14 @@ import { allIconNames, registerIcons } from './register-icons';
 
 import type { IconifyName } from './register-icons';
 
-export type IconifyProps = React.ComponentProps<typeof IconRoot> &
-  Omit<IconProps, 'icon'> & {
-    icon: IconifyName;
-  };
+export type IconifyProps = Omit<React.ComponentProps<typeof IconRoot>, 'icon'> & {
+  icon: IconifyName | string;
+};
 
 export function Iconify({ className, icon, width = 20, height, sx, ...other }: IconifyProps) {
   const id = useId();
 
-  if (!allIconNames.includes(icon)) {
+  if (!(allIconNames as string[]).includes(icon as string)) {
     console.warn(
       [
         `Icon "${icon}" is currently loaded online, which may cause flickering effects.`,

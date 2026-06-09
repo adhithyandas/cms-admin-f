@@ -7,8 +7,6 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 
-// ----------------------------------------------------------------------
-
 /**
  * @rules common
  * from 'react', 'eslint-plugin-react-hooks'...
@@ -175,8 +173,6 @@ export const customConfig = {
     ...sortImportsRules(),
   },
 };
-
-// ----------------------------------------------------------------------
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
