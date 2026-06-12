@@ -41,7 +41,6 @@ export default function Page() {
   const total = response?.total || 0;
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleDelete = async () => {
     if (deleteId) {
@@ -92,7 +91,6 @@ export default function Page() {
               <Table sx={{ minWidth: 800 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Icon</TableCell>
                     <TableCell>Title</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Price</TableCell>
@@ -110,14 +108,6 @@ export default function Page() {
                         },
                       }}
                     >
-                      <TableCell>
-                        <Box
-                          component="img"
-                          src={course.icon}
-                          sx={{ width: 48, height: 48, borderRadius: 1, objectFit: 'cover', cursor: 'pointer' }}
-                          onClick={() => setPreviewImage(course.icon)}
-                        />
-                      </TableCell>
 
                       <TableCell sx={{ fontWeight: 'fontWeightMedium' }}>{course.title}</TableCell>
 
@@ -140,7 +130,7 @@ export default function Page() {
 
                   {courses.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                      <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
                         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           No courses found.
                         </Typography>
@@ -177,16 +167,6 @@ export default function Page() {
             <Button onClick={() => setDeleteId(null)}>Cancel</Button>
             <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
           </DialogActions>
-        </Dialog>
-
-        <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
-          {previewImage && (
-            <Box
-              component="img"
-              src={previewImage}
-              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
-            />
-          )}
         </Dialog>
 
         <Backdrop open={isWorking} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, color: '#fff' }}>

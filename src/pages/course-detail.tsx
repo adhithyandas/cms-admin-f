@@ -26,12 +26,11 @@ export default function CourseDetailPage() {
   const { mutateAsync: addCourse, isPending: isAdding } = useAddCourseMutation();
   const { mutateAsync: updateCourse, isPending: isUpdating } = useUpdateCourseMutation();
 
-  const [formData, setFormData] = useState({ title: '', description: '', price: '', icon: null as File | null });
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({ title: '', description: '', price: '' });
 
   useEffect(() => {
     if (course) {
-      setFormData({ title: course.title || '', description: course.description || '', price: course.price || '', icon: null });
+      setFormData({ title: course.title || '', description: course.description || '', price: course.price || '' });
     }
   }, [course]);
 
@@ -41,13 +40,6 @@ export default function CourseDetailPage() {
     fd.append('title', formData.title);
     fd.append('description', formData.description);
     fd.append('price', formData.price);
-
-    if (formData.icon) {
-      fd.append('icon', formData.icon);
-    } else if (!isEdit) {
-      alert('Please upload an icon');
-      return;
-    }
 
     try {
       if (isEdit) {
@@ -130,35 +122,7 @@ export default function CourseDetailPage() {
                 sx={{ '& .MuiOutlinedInput-root fieldset': { borderWidth: '1px !important', borderColor: 'rgba(145, 158, 171, 0.2) !important' } }}
               />
 
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>Icon / Image</Typography>
-                {formData.icon instanceof File ? (
-                  <Box
-                    component="img"
-                    src={URL.createObjectURL(formData.icon)}
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
-                    onClick={() => setPreviewImage(URL.createObjectURL(formData.icon!))}
-                  />
-                ) : course?.icon ? (
-                  <Box
-                    component="img"
-                    src={course.icon}
-                    sx={{ width: 128, height: 128, objectFit: 'cover', borderRadius: 1, mb: 2, cursor: 'pointer' }}
-                    onClick={() => setPreviewImage(course.icon)}
-                  />
-                ) : null}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.files ? e.target.files[0] : null })}
-                />
 
-                {isEdit && !formData.icon && (
-                  <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>
-                    Leave empty to keep current icon
-                  </Typography>
-                )}
-              </Box>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
                 <Button variant="outlined" onClick={() => router.push('/courses')}>Cancel</Button>
@@ -169,16 +133,6 @@ export default function CourseDetailPage() {
             </Box>
           </form>
         </Box>
-
-        <Dialog open={!!previewImage} onClose={() => setPreviewImage(null)} maxWidth="md" fullWidth>
-          {previewImage && (
-            <Box
-              component="img"
-              src={previewImage}
-              sx={{ width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain', bgcolor: 'background.default' }}
-            />
-          )}
-        </Dialog>
       </DashboardContent>
     </>
   );
